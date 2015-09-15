@@ -19,15 +19,32 @@ public abstract class Display {
 
         window = new JFrame(title);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        content = new Canvas();
+        content = new Canvas(){
+            public void paint(Graphics g){
+                super.paint(g);
+                render(g); //
+            }
+        };
 
         Dimension size = new Dimension(width, height);
         content.setPreferredSize(size); //лист имеет размер width and height
+        content.setBackground(Color.black);
 
         window.setResizable(false); //нельзя менять размер окна
         window.getContentPane().add(content);
         window.pack(); // контент будет находится внутри окна без потерь
         window.setLocationRelativeTo(null); // меняем позицию окна в зависимости от переданного компонента
         window.setVisible(true);
+    }
+
+    public static void render(){
+        content.repaint();
+    }
+
+    private static void render(Graphics g){
+
+        g.setColor(Color.white);
+        g.fillOval(400 - 50, 300 - 50, 100, 100);
+
     }
 }
