@@ -30,6 +30,8 @@ public class Game implements Runnable{
     private Graphics2D          graphics;
     private Input               input;
     private TextureAtlas        atlas;
+    private SpriteSheet         sheet;
+    private Sprite              sprite;
 
     //temp
     float x = 350;
@@ -48,6 +50,8 @@ public class Game implements Runnable{
         input = new Input();
         Display.addInputListener(input);
         atlas = new TextureAtlas(ATLAS_FILE_NAME);
+        sheet = new SpriteSheet(atlas.cut(1 * 16, 9 * 16, 16, 16), 1, 16);
+        sprite = new Sprite(sheet, 1);
     }
 
     // Начало игры (синронизован)
@@ -86,9 +90,11 @@ public class Game implements Runnable{
     // После подсчета физики рисуем следующую сцену с помощью render()
     private void render(){
         Display.clear();
-        graphics.setColor(Color.white);
 
-        graphics.drawImage(atlas.cut(0, 0, 32, 32), 300, 300, null);
+        sprite.render(graphics, x, y);
+//        graphics.setColor(Color.white);
+//
+//        graphics.drawImage(atlas.cut(0, 0, 32, 32), 300, 300, null);
 
 //        graphics.fillOval((int)(x + Math.sin(delta) * 200), (int)y, (int)(radius * 2), (int)(radius * 2));
         Display.swapBuffers();
