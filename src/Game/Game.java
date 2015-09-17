@@ -1,9 +1,11 @@
 package Game;
 
 import Display.Display;
+import IO.Input;
 import Utils.Time;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  * Created by ilnurgazizov on 17.09.15.
@@ -22,13 +24,15 @@ public class Game implements Runnable{
 
     private boolean             running;
     private Thread              gameThread;
-    private Graphics2D graphics;
+    private Graphics2D          graphics;
+    private Input               input;
 
     //temp
     float x = 350;
     float y = 250;
     float delta = 0;
     float radius = 50;
+    float speed = 3;
 
     //temp and
 
@@ -37,6 +41,8 @@ public class Game implements Runnable{
         running = false;
         Display.create(WIDTH, HEIGTH, TITLE, CLEAR_COLOR, NUM_BUFFERS);
         graphics = Display.getGraphics();
+        input = new Input();
+        Display.addInputListener(input);
     }
 
     // Начало игры (синронизован)
@@ -65,7 +71,10 @@ public class Game implements Runnable{
     // Геометрия и физика игры
     private void update(){
 
-        delta += 0.02f;
+        if (input.getKey(KeyEvent.VK_UP)) y -= speed;
+        if (input.getKey(KeyEvent.VK_DOWN)) y += speed;
+        if (input.getKey(KeyEvent.VK_LEFT)) x -= speed;
+        if (input.getKey(KeyEvent.VK_RIGHT)) x += speed;
 
     }
 
