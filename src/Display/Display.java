@@ -2,6 +2,7 @@ package Display;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.Arrays;
@@ -20,12 +21,9 @@ public abstract class Display {
     private static Graphics bufferGraphics;
     private static int clearColor; // для очистки buffer
 
-    //  temp
-    private static float delta = 0;
-    //  temp end
+    private static BufferStrategy bufferStrategy; // для имплементации баферов
 
-
-    public static void create(int width, int height, String title, int _clearColor){
+    public static void create(int width, int height, String title, int _clearColor, int numBuffers){
 
         //Проверка
         if (created) return;
@@ -46,8 +44,12 @@ public abstract class Display {
         buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         bufferData = ((DataBufferInt) buffer.getRaster().getDataBuffer()).getData();
         bufferGraphics = buffer.getGraphics();
-
+        ((Graphics2D) bufferGraphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // включили сглаживания
         clearColor = _clearColor;
+
+        content.createBufferStrategy(numBuffers); // стратегия буферизации и передаем количество баферов
+        bufferStrategy = content.getBufferStrategy();
+
         created = true;
     }
 
@@ -55,16 +57,35 @@ public abstract class Display {
         Arrays.fill(bufferData, clearColor); // заполняем одинаковыми элементами
     }
 
-    public static void render() {
-        bufferGraphics.setColor(new Color(0xff0000ff));
-        bufferGraphics.fillOval((int)(350 + (Math.sin(delta) * 200)), 250, 100, 100);
-        delta += 0.02f;
-    }
+//    public static void render() {
+//        bufferGraphics.setColor(new Color(0xff0000ff));
+//        bufferGraphics.fillOval((int) (350 + (Math.sin(delta) * 200)), 250, 100, 100);
+//
+//        ((Graphics2D) bufferGraphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // включили сглаживания
+//
+//        bufferGraphics.fillOval((int) (500 + (Math.sin(delta) * 200)), 250, 100, 100);
+//        ((Graphics2D) bufferGraphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF); // выключили сглаживание
+//        //delta += 0.02f;
+//    }
 
     // метод менять то что мы видим внутри канваса на то что мы создали
     public static void swapBuffers(){
-        Graphics g = content.getGraphics();
+        Graphics g = bufferStrategy.getDrawGraphics(); // вернет тот который должен быть на очереди, а не тот который мы видим
         g.drawImage(buffer, 0, 0, null);
+        bufferStrategy.show(); // показываем
+    }
+    // Для получения бафферГрафикс из вне
+    public static Graphics2D getGraphics(){
+        return (Graphics2D) bufferGraphics;
+    }
+
+    public static void destroy(){
+        if (!created) return;
+        window.dispose();
+    }
+
+    public static void setTitle(String title){
+        window.setTitle(title);
     }
 
 }
