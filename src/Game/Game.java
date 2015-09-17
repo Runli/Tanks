@@ -3,6 +3,7 @@ package Game;
 import Display.Display;
 import IO.Input;
 import Utils.Time;
+import graphics.TextureAtlas;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -22,10 +23,13 @@ public class Game implements Runnable{
     public static final float   UPDATE_INTERVAL = Time.SECOND / UPDATE_RATE; // Интервалы между update
     public static final long   IDLE_TIME       = 1; // даем "подышать" потоку, в миллисекундах
 
+    public static final String ATLAS_FILE_NAME = "texture_atlas.png";
+
     private boolean             running;
     private Thread              gameThread;
     private Graphics2D          graphics;
     private Input               input;
+    private TextureAtlas        atlas;
 
     //temp
     float x = 350;
@@ -43,6 +47,7 @@ public class Game implements Runnable{
         graphics = Display.getGraphics();
         input = new Input();
         Display.addInputListener(input);
+        atlas = new TextureAtlas(ATLAS_FILE_NAME);
     }
 
     // Начало игры (синронизован)
@@ -82,7 +87,10 @@ public class Game implements Runnable{
     private void render(){
         Display.clear();
         graphics.setColor(Color.white);
-        graphics.fillOval((int)(x + Math.sin(delta) * 200), (int)y, (int)(radius * 2), (int)(radius * 2));
+
+        graphics.drawImage(atlas.cut(0, 0, 32, 32), 300, 300, null);
+
+//        graphics.fillOval((int)(x + Math.sin(delta) * 200), (int)y, (int)(radius * 2), (int)(radius * 2));
         Display.swapBuffers();
 
     }
