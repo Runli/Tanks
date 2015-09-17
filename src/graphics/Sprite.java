@@ -1,4 +1,5 @@
-package Game;
+package graphics;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 

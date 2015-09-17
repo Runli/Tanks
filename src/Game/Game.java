@@ -6,7 +6,6 @@ import Utils.Time;
 import graphics.TextureAtlas;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 /**
  * Created by ilnurgazizov on 17.09.15.
@@ -30,17 +29,7 @@ public class Game implements Runnable{
     private Graphics2D          graphics;
     private Input               input;
     private TextureAtlas        atlas;
-    private SpriteSheet         sheet;
-    private Sprite              sprite;
-
-    //temp
-    float x = 350;
-    float y = 250;
-    float delta = 0;
-    float radius = 50;
-    float speed = 3;
-
-    //temp and
+    private Player              player;
 
     // Конструктор
     public Game(){
@@ -50,8 +39,8 @@ public class Game implements Runnable{
         input = new Input();
         Display.addInputListener(input);
         atlas = new TextureAtlas(ATLAS_FILE_NAME);
-        sheet = new SpriteSheet(atlas.cut(1 * 16, 9 * 16, 16, 16), 1, 16);
-        sprite = new Sprite(sheet, 1);
+        player = new Player(300, 300, 2, 3, atlas);
+
     }
 
     // Начало игры (синронизован)
@@ -79,24 +68,14 @@ public class Game implements Runnable{
 
     // Геометрия и физика игры
     private void update(){
-
-        if (input.getKey(KeyEvent.VK_UP)) y -= speed;
-        if (input.getKey(KeyEvent.VK_DOWN)) y += speed;
-        if (input.getKey(KeyEvent.VK_LEFT)) x -= speed;
-        if (input.getKey(KeyEvent.VK_RIGHT)) x += speed;
+        player.update(input);
 
     }
 
     // После подсчета физики рисуем следующую сцену с помощью render()
     private void render(){
         Display.clear();
-
-        sprite.render(graphics, x, y);
-//        graphics.setColor(Color.white);
-//
-//        graphics.drawImage(atlas.cut(0, 0, 32, 32), 300, 300, null);
-
-//        graphics.fillOval((int)(x + Math.sin(delta) * 200), (int)y, (int)(radius * 2), (int)(radius * 2));
+        player.render(graphics);
         Display.swapBuffers();
 
     }
